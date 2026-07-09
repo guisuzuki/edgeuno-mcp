@@ -1,3 +1,6 @@
+<img width="2214" height="1274" alt="image" src="https://github.com/user-attachments/assets/55275e02-49b2-4971-a1d4-b007430fd93e" />
+
+
 # EdgeUno MCP Playground
 
 **OpenAPI → MCP Explorer** — uma interface para explorar endpoints OpenAPI da EdgeUno (provedor de VPS/hospedagem) expostos como ferramentas MCP (Model Context Protocol), testá-los em um playground conversacional com um agente de IA e acompanhar métricas e logs de execução.
