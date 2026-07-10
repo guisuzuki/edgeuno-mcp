@@ -7,32 +7,39 @@ import { parseToolDecision } from "./services/responseParser";
 import { toolExecutor } from "./services/toolExecutor";
 
 import { assistantResponse } from "./services/assistantResponses";
+import { getCachedDecision, setCachedDecision } from "./services/promptCache";
 import { successResponse } from "../../utils/apiResponse";
 
 export class ToolAgent {
   async run(prompt: string) {
     const startedAt = Date.now();
 
-    const completion = await openrouter.chat.completions.create({
-      model: "openai/gpt-oss-120b",
-      max_tokens: 500,
+    let decision = getCachedDecision(prompt);
 
-      messages: [
-        {
-          role: "system",
-          content: SYSTEM_PROMPT,
-        },
+    if (!decision) {
+      const completion = await openrouter.chat.completions.create({
+        model: "openai/gpt-oss-120b",
+        max_tokens: 500,
 
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-    });
+        messages: [
+          {
+            role: "system",
+            content: SYSTEM_PROMPT,
+          },
 
-    const content = completion.choices[0].message.content ?? "";
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+      });
 
-    const decision = parseToolDecision(content);
+      const content = completion.choices[0].message.content ?? "";
+
+      decision = parseToolDecision(content);
+
+      setCachedDecision(prompt, decision);
+    }
 
     const response = await toolExecutor(decision.tool, decision.arguments);
 
